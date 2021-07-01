@@ -1,4 +1,53 @@
-h1, 
+h1,
 .author {
     color: #00AAA3;
+}
+
+:not(pre)>code:before,
+:not(pre)>code:after {
+    content: '`';
+    opacity: 0.1;
+}
+
+:not(pre)>code {
+    font-size: 0.8em;
+}
+
+.col-left {
+    margin-right: 4px;
+}
+
+.col-right {
+    margin-left: 4px;
+}
+
+.slidev-layout h1 {
+    font-weight: bold;
+}
+
+.slidev-layout h2 {
+    font-size: 1.5rem;
+    color: #00AAA3;
+}
+
+.slidev-layout h3 {
+    text-transform: initial;
+}
+
+
+pre::-webkit-scrollbar-track {
+    background-color: #F5F5F5;
+    border-radius: 3px;
+}
+
+pre::-webkit-scrollbar {
+    height: 6px;
+    background-color: #F5F5F5;
+    border-radius: 3px;
+}
+
+pre::-webkit-scrollbar-thumb {
+    background-color: #dae2d8;
+    border: 0px solid #fff;
+    border-radius: 3px;
 }
