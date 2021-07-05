@@ -31,7 +31,14 @@ h1,
 }
 
 .slidev-layout h3 {
+    margin-top: 12px;
+    margin-bottom: 6px;
     text-transform: initial;
+}
+
+.slidev-layout h3:first-child {
+    margin-top: 0;
+    padding-top: 0;
 }
 
 

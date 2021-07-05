@@ -1,19 +1,26 @@
 ---
-layout: 'cover'
-background: '/bg.jpg'
+layout: cover
+background: /bg.jpg
 download: true
+title: 初识 Jest
 ---
+
 # 初识 Jest
 <p class="mx-56 author">———— 赵昌柱</p>
+
+<!--
+感谢领导让我作为先行者, 有机会学习自动化测试, 让我接触到一个新的开发方式.
+-->
 
 ---
 
 # 背景介绍
-- TS, Flow, EsLint, StyleLint 等前端工具都可以帮助减少 bug 产生. 
-- 引入自动化测试可以更好地降低 bug 产生的可能性.
-- 流行开源库都使用自动化测试. 多人协作时可以保证代码不会被意外修改.
-- 在迭代旧项目时, 如果有自动化测试, 在修bug或增加新功能时, 可以保证不会影响之前的功能.
-- 测试主要分为单元测试, 集成测试, end-to-end测试(端到端测试).
+- TS, Flow, EsLint, StyleLint 等前端工具都可以帮助减少 bug 产生
+- 引入自动化测试可以更好地降低 bug 产生的可能性
+- 流行开源库都使用自动化测试. 多人协作时可以保证代码不会被意外修改
+- 在迭代旧项目时, 如果有自动化测试, 在修bug或增加新功能时, 可以保证不会影响之前的功能
+- 测试主要分为单元测试, 集成测试, 端到端测试(end-to-end)
+- 测试编写的2种方案: TDD, BDD
 
 ---
 
@@ -346,7 +353,7 @@ test('the data is "some data" (使用 async/await)', async () => {
 <br>
 <br>
 
-### 方式2: 测试异常情况
+### 方式3: 测试异常情况
 ```javascript{1-2}
 test('error occur (使用 async/await)', async () => {
     await expect(fetchData2(true)).rejects.toThrow("fake error");
@@ -362,7 +369,7 @@ test('error occur (使用 async/await)', async () => {
 # 钩子函数
 执行一些初始化, 清理等工作
 
-<div class="grid grid-cols-3 gap-4">
+<div class="grid grid-cols-4 gap-4">
 
 - 针对单个测试
   - `beforeEach()`
@@ -376,7 +383,8 @@ test('error occur (使用 async/await)', async () => {
 <div class="mt-0">👉 钩子函数 <a href="https://jestjs.io/docs/setup-teardown">Guide</a></div>
 
 </div>
-<div class="flex gap-4 mt-6">
+<div class="grid grid-cols-2 gap-4 mt-6">
+<div>
 
 ### 示例
 ```javascript
@@ -394,6 +402,9 @@ describe('Scoped / Nested block', () => {
 });
 ```
 
+</div>
+<div>
+
 ### 输出
 ```txt
 1 - beforeAll
@@ -410,6 +421,7 @@ describe('Scoped / Nested block', () => {
 1 - afterAll
 ```
 
+</div>
 </div>
 
 ---
@@ -611,25 +623,26 @@ test('should fetch users', async () => {
 
 # Mock - mock 实现 (Implementations)
 如果需要返回值的情况比较复杂, 还可以自定义实现
-<div class="flex gap-2">
+<div class="grid grid-cols-2 gap-2">
 <div>
 
 - `jest.fn(implementation)`
 - `mockImplementation(fn)`
 - `mockImplementationOnce(fn)`
 
-<br>
+</div>
+<div>
 
 ### 示例1: 使用 `jest.fn()`
 
 ```javascript
-const myMockFn = jest.fn(cb => cb(null, true));~~~~
+const myMockFn = jest.fn(cb => cb(null, true));
 myMockFn((err, val) => console.log(val));
 // > true
 ```
 
 </div>
-<div>
+</div>
 
 ### 示例2: 使用 `mockImplementation(fn)`
 
@@ -648,9 +661,6 @@ foo.mockImplementation(() => 42);
 foo();
 // > 42
 ```
-
-</div>
-</div>
 
 
 ---
@@ -672,3 +682,66 @@ foo();
 ---
 
 # AngularJS
+
+
+---
+
+# 单元测试, 集成测试
+
+<div class="grid grid-cols-2 gap-4">
+<div>
+
+### 单元测试
+- 测试独立模块
+- 测试更细致
+- 提高边界覆盖率
+- 无法保证功能连接起来是没有问题的
+- 如果改变代码实现细节, 需要更改对应单元测试代码
+- 需要编写大量测试代码
+
+</div>
+<div>
+
+### 集成测试
+- 联动测试
+- 进行整体代码的测试
+- 如果通过测试, 说明代码一定可以运行
+
+</div>
+</div>
+
+---
+
+# TDD, BDD
+
+<div class="grid grid-cols-2 gap-4">
+<div>
+
+### TDD: Test Driven Development  
+1. 先写测试再写代码
+2. 一般结合单元测试使用, 是白盒测试
+3. 测试重点在代码
+4. 安全感低
+5. 速度快
+6. 适合工具库的测试
+
+</div>
+<div>
+
+### BDD: Behavior Driven Development
+1. 先写代码再写测试
+2. 一般结合集成测试使用, 是黑盒测试
+3. 测试重点在 UI (DOM)
+4. 安全感高
+5. 速度慢
+6. 适合业务 UI 测试
+
+</div>
+</div>
+
+---
+layout: center
+class: text-center
+---
+
+<h1 style="font-size:96px;letter-spacing:0.3em">谢谢!</h1>
