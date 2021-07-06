@@ -105,7 +105,9 @@ test('formatNumStr(12)', () => {
 ---
 
 # 测试框架对比与选择
+
 <img class="h-5/6" src="test-framework-compare.png">
+<p class="text-xs text-gray-400">数据来源: <a href="https://sourl.cn/MFhVyj">star-history.t9t.io</a></p>
 
 ---
 
@@ -131,7 +133,6 @@ test('formatNumStr(12)', () => {
 4. 添加 script, `test: "jest"`
 
 <br>
-<br>
 
 ### 测试代码与之前相同
 ```javascript
@@ -154,17 +155,18 @@ test('formatNumStr(12)', () => {
 4. 生成测试覆盖率报告, `--coverage` 和 `coverageDirectory`
 5. 👉 配置 [Ref](https://jestjs.io/docs/configuration)
 6. 支持 ESM  
-    ### 安装 Babel
-    ```bash
-    yarn add --dev babel-jest @babel/core @babel/preset-env
-    ```
-    ### 配置 Babel
-    ```javascript
-    // babel.config.js
-    module.exports = {
-        presets: [['@babel/preset-env', {targets: {node: 'current'}}]],
-    };
-    ```
+
+### 安装 Babel
+```bash
+yarn add --dev babel-jest @babel/core @babel/preset-env
+```
+### 配置 Babel
+```javascript
+// babel.config.js
+module.exports = {
+    presets: [['@babel/preset-env', {targets: {node: 'current'}}]],
+};
+```
 
 ---
 
@@ -213,7 +215,7 @@ test('formatNumStr(12)', () => {
 
 # 测试异步代码
 
-<div class="grid grid-cols-2 gap-4">
+<div class="grid grid-cols-[8fr,7fr] gap-4">
 <div>
 
 ### 待测代码, 传统回调形式
@@ -662,14 +664,161 @@ foo();
 // > 42
 ```
 
-
----
-
-# snapshot
-
 ---
 
 # Mock Timers (可选)
+Jest 可以用允许你控制时间流逝的函数来替换定时器, 👉 [Guide](https://jestjs.io/docs/timer-mocks)
+
+- `jest.useFakeTimers()` - 使用伪造版本的定时器函数
+- `jest.useRealTimers()` - 使用真实版本的定时器函数
+- `jest.runAllTimers()` - 耗尽任务队列, 包括任务中安排的新的任务
+- `jest.runOnlyPendingTimers()` - 只执行当前待定的宏任务, 这些任务中安排的新的宏任务不会执行
+- `jest.advanceTimersByTime(msToRun)` - 只执行宏任务队列, 所有的定时器提前 msToRun 毫秒, 执行时间段内待定的宏任务, 包括任务中安排的新的任务
+
+---
+
+# 对 DOM 节点操作的测试
+Jest 带有 jsdom, 它模拟了一个DOM环境.
+
+我们可以直接使用 document 对象, 就像在浏览器中一样.
+
+```javascript {7-11,16,18}
+import $ from 'jquery';
+import {registerClick} from '../displayUser.js';
+import {fetchCurrentUser} from '../fetchCurrentUser.js';
+jest.mock('../fetchCurrentUser.js');
+
+test('displays a user after a click', () => {
+    document.body.innerHTML = 
+    '<div>' +
+    '  <span id="username" />' +
+    '  <button id="button" />' +
+    '</div>';
+    fetchCurrentUser.mockImplementation(cb => {
+        cb({fullName: 'Johnny Cash', loggedIn: true});
+    });
+    registerClick();
+    $('#button').trigger('click');
+    expect(fetchCurrentUser).toBeCalled();
+    expect($('#username').text()).toEqual('Johnny Cash - Logged In');
+});
+```
+
+---
+
+# 快照 (snapshot) - 1
+当想要确保对象不会发生意外变化时, 快照测试非常有用. 👉 [Guide](https://jestjs.io/docs/snapshot-testing)
+
+- 快照测试就是将当前的值(快照)与之前保存的值(快照)进行比对. 
+- 不论是因为 bug, 还是因为更改实现, 如果两次快照内容不同, 该测试用例失败.
+- 初次进行快照测试时, 会把当前快照保存, 作为下次测试时的对比对象. 
+- 快照保存在与测试文件同级的 `__snapshots__` 文件夹下.
+- 快照测试其实就是做字符串对比, 只不过对比的对象一个是当前值, 一个是历史值.
+- 进行快照时, Jest 会自动进行格式化, 确保快照的可读性.
+- 应该将快照当作代码对待, 并提交到代码库.
+
+<div class="grid grid-cols-2 gap-2 mt-1">
+<div>
+
+### 快照测试
+
+```javascript {5}
+test('Link changes the class when hovered', () => {
+  const tree = renderer.create(
+    <Link page="http://www.facebook.com">Facebook</Link>
+  ).toJSON();
+  expect(tree).toMatchSnapshot();
+}
+```
+
+</div>
+<div>
+
+### 快照文件
+
+```javascript
+exports[`Link changes the class when hovered 1`] = `
+<a
+  className="normal"
+  href="http://www.facebook.com"
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+>
+  Facebook
+</a>
+`;
+```
+
+</div>
+</div>
+
+---
+
+# 快照 (snapshot) - 2
+
+### 更新快照
+- 如果是有意的更改导致快照测试失败, 可以通过命令 `jest --updateSnapshot` (或 `-u`) 对快照进行更新.
+- 默认更新所有失败的快照. 可以先修复 bug 造成的快照测试失败, 然后再更新. 
+- 或者使用 `--testNamePattern` 选项限定更新的测试用例.
+- 失败的快照也可以在交互的 watch 模式中进行更新.
+
+<div class="mt-4">
+  <img width="377" class="inline-block w-1/4 mr-4" src="snapshot-failed.png">
+  <img width="446" class="inline-block w-1/3 mr-4" src="watch-mode.png">
+</div>
+
+---
+
+# 快照 (snapshot) - 3
+
+### 内联快照 (Inline Snapshots)
+- 内联快照. 不在外部文件中, 而是直接在测试代码中生成快照. 方便查看. 使用 `.toMatchInlineSnapshot()` 方法进行内联快照测试.
+
+### 属性匹配器 (Property Matchers)
+- 动态内容, 如 id, 日期 等, 可以提供一个非对称匹配器.
+
+<div class="grid grid-cols-[2fr,3fr] gap-2 mt-2">
+<div>
+
+### 内联快照
+
+```javascript {6-12}
+it('inline snapshot', () => {
+    const obj = {
+        msg: 'hello, jest!',
+        date: new Date(),
+    };
+    expect(obj).toMatchInlineSnapshot(`
+Object {
+  "date": 2021-07-06T10:42:55.545Z,
+  "msg": "hello, jest!",
+}
+`);
+});
+```
+
+</div>
+<div>
+
+### 属性匹配器
+
+```javascript {6-12}
+it('inline snapshot', () => {
+    const obj = {
+        msg: 'hello, jest!',
+        date: new Date(),
+    };
+    expect(obj).toMatchInlineSnapshot({ date: expect.any(Date) }, `
+Object {
+  "date": Any<Date>,
+  "msg": "hello, jest!",
+}
+`);
+});
+```
+
+</div>
+</div>
 
 ---
 
@@ -677,7 +826,7 @@ foo();
 
 ---
 
-# DOM 测试
+# React
 
 ---
 
