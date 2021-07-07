@@ -578,7 +578,10 @@ test("mock return value", () => {
 
 # Mock - mock 模块
 
-<div class="grid grid-cols-2 gap-4">
+- 使用 `jest.mock(moduleName)` mock 模块后, 再导入的模块就是 mock 之后的模块了
+- `babel-jest` 插件会自动提升 `jest.mock`
+
+<div class="grid grid-cols-2 gap-4 mt-4">
 <div>
 
 ### 待测代码
@@ -608,7 +611,6 @@ jest.mock('axios'); // axios 对象中的所有方法都会被 mock
 test('should fetch users', async () => {
     const users = [{ name: 'Bob' }];
     axios.get.mockResolvedValue({ data: users }); // get 方法已被 mock
-
     // or you could use the following depending on your use case:
     // axios.get.mockImplementation(() => Promise.resolve(resp))
 
@@ -822,11 +824,34 @@ Object {
 
 ---
 
-# ES6 类的测试
-
----
-
 # React
+React 官方推荐 [Jest](https://jestjs.io/) 和 [React Testing Library](https://testing-library.com/react)
+
+- React Testing Library 是一组辅助工具.
+- React 本身也提供了一些辅助工具.
+  - **react-dom/test-utils**, 如 `act()` 可以确保与UI相关的所有更新在断言之前已经被处理并应用于DOM.
+  - **react-test-renderer**, 用来将 React 组件渲染成纯 JavaScript 对象
+
+### React 中的辅助工具
+官方的 [Testing Recipes](https://reactjs.org/docs/testing-recipes.html) 演示了在不使用辅助工具的情况下进行各种测试的案例.
+
+<div class="grid grid-cols-2 gap-2 mt-2">
+<div>
+
+- 设置/清除测试环境 (准备 DOM 容器, 卸载 DOM 树)
+- 渲染组件
+- 异步数据获取
+- mock 模块
+
+</div>
+<div>
+
+- 事件
+- Timers
+- 快照测试
+
+</div>
+</div>
 
 ---
 
